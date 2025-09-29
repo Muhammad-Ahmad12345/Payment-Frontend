@@ -1,5 +1,10 @@
 const stripe = Stripe("pk_test_51S9or41hqh1au5WuVuxtRgqzNDoIgLJbaEMDrwaAHPLnrYvsfEUNOMEmTpPml6PgD61zbzjeXxCkGjTjrqSMV6g600UJ2UzEpO"); 
 
+const BACKEND_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:4000" 
+    : "https://payment-be.onrender.com"; 
+
 const elements = stripe.elements();
 const cardElement = elements.create("card");
 cardElement.mount("#card-element");
@@ -20,7 +25,7 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-  const response = await fetch("http://localhost:4000/pay", {
+  const response = await fetch(`${BACKEND_URL}/pay`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

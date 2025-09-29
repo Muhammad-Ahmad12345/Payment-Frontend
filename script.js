@@ -3,7 +3,7 @@ const stripe = Stripe("pk_test_51S9or41hqh1au5WuVuxtRgqzNDoIgLJbaEMDrwaAHPLnrYvs
 const BACKEND_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:4000" 
-    : "https://payment-be.onrender.com"; 
+    : "https://payment-be-8.onrender.com/"; 
 
 const elements = stripe.elements();
 const cardElement = elements.create("card");

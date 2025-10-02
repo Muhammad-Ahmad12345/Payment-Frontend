@@ -35,11 +35,23 @@ form.addEventListener("submit", async (event) => {
     }),
   });
 
-  const result = await response.json();
+  
+let result;
+try {
+  result = await response.json();
+} catch (err) {
+  message.textContent = "❌ Server error (invalid JSON)";
+  return;
+}
 
-  if (result.status === "succeeded") {
-    message.textContent = "✅ Payment Successful!";
-  } else {
-    message.textContent = "⚠️ Payment Status: " + result.status;
-  }
+if (!response.ok) {
+  message.textContent = "⚠️ Payment Failed: " + result.message;
+  return;
+}
+
+if (result.status === "succeeded") {
+  message.textContent = "✅ Payment Successful!";
+} else {
+  message.textContent = "⚠️ Payment Status: " + result.status;
+}
 });

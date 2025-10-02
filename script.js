@@ -55,3 +55,7 @@ if (result.status === "succeeded") {
   message.textContent = "⚠️ Payment Status: " + result.status;
 }
 });
+
+document.getElementById("show-history").addEventListener("click", () => {
+  window.location.href = "/history";
+});

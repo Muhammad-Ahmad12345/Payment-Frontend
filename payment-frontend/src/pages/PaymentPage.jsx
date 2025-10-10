@@ -3,7 +3,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from "../components/PaymentForm";
 import { FaCreditCard } from "react-icons/fa";
 
-const stripePromise = loadStripe("pk_test_51SGlw75hdSXL5dQP7A9XLJvK1ZSQVLgxfP9kbIg243m1laQ6VJ21mx30hBgKNTxyyY5X3skyq8zxNbkvI07O2JOW00kzPMIpwP");
+const stripePromise = loadStripe("pk_test_51SGlw75hdSXL5dQP7A9XLJvK1ZSQVLgxfP9kbIg243m1laQ6VJ21mx30hBgKNTxyyY5X3skyq8zxNbkvI07O2JOW00kzPMIpwP"); // Replace with your own
 
 export default function PaymentPage() {
   return (

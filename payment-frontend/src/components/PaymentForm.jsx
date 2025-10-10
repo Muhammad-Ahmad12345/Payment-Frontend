@@ -5,27 +5,31 @@ export default function PaymentForm() {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [amount, setAmount] = useState(1000);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
 
-    setMessage("Processing payment...");
+    setLoading(true);
+    setMessage("");
 
     try {
       const res = await fetch("http://localhost:4000/pay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-        amount: 1000,          
-        currency: "usd",        
-}),
+          amount: Number(amount),
+          currency: "usd",
+        }),
       });
 
       const data = await res.json();
 
       if (!data.clientSecret) {
         setMessage("Error creating payment intent");
+        setLoading(false);
         return;
       }
 
@@ -37,27 +41,81 @@ export default function PaymentForm() {
       );
 
       if (error) {
-        setMessage(error.message);
+        setMessage("❌ " + error.message);
       } else if (paymentIntent.status === "succeeded") {
         setMessage("✅ Payment successful!");
+      } else {
+        setMessage("⚠️ Payment status: " + paymentIntent.status);
       }
-    } catch (err) {
+    } catch {
       setMessage("❌ Something went wrong.");
-      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const CARD_ELEMENT_OPTIONS = {
+    style: {
+      base: {
+        color: "#1a1a1a",
+        fontSize: "16px",
+        "::placeholder": {
+          color: "#a0aec0",
+        },
+      },
+      invalid: {
+        color: "#e53e3e",
+      },
+    },
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <CardElement className="border p-3 rounded-md" />
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Amount (USD)
+        </label>
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          min="1"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Card Details
+        </label>
+        <div className="border border-gray-300 rounded-lg p-3 focus-within:ring-2 focus-within:ring-blue-500">
+          <CardElement options={CARD_ELEMENT_OPTIONS} />
+        </div>
+      </div>
+
       <button
         type="submit"
-        disabled={!stripe}
-        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+        disabled={!stripe || loading}
+        className={`w-full py-2 rounded-lg text-white font-medium transition ${
+          loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+        }`}
       >
-        Pay
+        {loading ? "Processing..." : "Pay Now"}
       </button>
-      <p className="text-center text-gray-600 mt-2">{message}</p>
+
+      {message && (
+        <p
+          className={`text-center mt-3 font-medium ${
+            message.includes("✅")
+              ? "text-green-600"
+              : message.includes("⚠️")
+              ? "text-yellow-600"
+              : "text-red-600"
+          }`}
+        >
+          {message}
+        </p>
+      )}
     </form>
   );
 }

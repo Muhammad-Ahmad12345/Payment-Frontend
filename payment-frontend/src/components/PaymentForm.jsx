@@ -13,11 +13,13 @@ export default function PaymentForm() {
     setMessage("Processing payment...");
 
     try {
-      // 🔹 Step 1: Ask backend to create a PaymentIntent
       const res = await fetch("http://localhost:4000/pay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: 1000 }), // Example: 1000 = $10.00
+        body: JSON.stringify({
+        amount: 1000,          
+        currency: "usd",        
+}),
       });
 
       const data = await res.json();
@@ -27,7 +29,6 @@ export default function PaymentForm() {
         return;
       }
 
-      // 🔹 Step 2: Confirm the card payment with Stripe
       const { error, paymentIntent } = await stripe.confirmCardPayment(
         data.clientSecret,
         {

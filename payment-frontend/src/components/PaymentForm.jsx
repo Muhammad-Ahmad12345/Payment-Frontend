@@ -16,7 +16,7 @@ export default function PaymentForm() {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:4000/pay", {
+      const res = await fetch("https://payment-be-8.onrender.com/pay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
